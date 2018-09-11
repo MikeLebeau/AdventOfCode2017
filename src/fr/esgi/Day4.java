@@ -524,26 +524,47 @@ public class Day4 {
                 "hwcy ujdun bjjuvd jbdvju onnk xeyy mmp onkn qyzl\n" +
                 "jwfm ptjwrbl hhuv uolz adyweh qpj wxyogp igvnojq jmfw pqs fsnirby";
 
-        List<String> wordList = new ArrayList<>();
+//        input = "aa bb cc dd\n" +
+//                "aa bb cc\n" +
+//                "aa bb cc aaa\n" +
+//                "aa bb cc aa";
 
-        int result = 0;
+        int total = 0;
+        int invalid = 0;
+
+        List<String> invalidPassphrase = new ArrayList<>();
+        List<String> validPassphrase = new ArrayList<>();
 
         for(String line : input.split("\\n")){
-            System.out.println("Line : " + line);
-            System.out.println("Number of words : " + line.split("\\s+").length);
+            List<String> wordList = new ArrayList<>();
+            total++;
+
+            boolean ok = true;
+
             for(String word : line.split("\\s+")){
-                if(wordList.contains(word.toLowerCase())){
-                    System.out.println("\t" + word);
-                    result++;
+                if( ! wordList.contains(word)){
+                    wordList.add(word);
                 }else{
-                    wordList.add(word.toLowerCase());
+                    ok = false;
+                    invalid++;
                 }
+            }
+
+            if(ok){
+                validPassphrase.add(line);
+            }else{
+                invalidPassphrase.add(line);
             }
         }
 
         System.out.println("-----------------------------------------------------------------------------");
-        System.out.println("Number of line : " + input.split("\\n").length);
-        System.out.println("Number of invalid passphrases: " + result);
-        System.out.println("Number of valid passphrases: " + (input.split("\\n").length - result) );
+        System.out.println("Number of line : " + total);
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println("Number of invalid passphrases: " + invalid);
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println("Invalid passphrases size : " + invalidPassphrase.size());
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println("Valid passphrases size : " + validPassphrase.size());
+        System.out.println("-----------------------------------------------------------------------------");
     }
 }
