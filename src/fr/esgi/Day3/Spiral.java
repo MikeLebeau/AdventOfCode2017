@@ -1,8 +1,5 @@
 package fr.esgi.Day3;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by LEBEAU Mike
  * ESGI - 5 AL 1
@@ -16,8 +13,7 @@ public class Spiral {
 
     private int[][] matrix;
 
-    // All numbers on right bottom diagonal
-    private List<Integer> magicNums = new ArrayList<>();
+    private String lastMove = "none";
 
     public Spiral(int sideSize) {
         posX = 0;
@@ -25,74 +21,109 @@ public class Spiral {
         this.sideSize = sideSize;
 
         matrix = new int[sideSize][sideSize];
+    }
 
-        for(int i = 1; i < sideSize*sideSize; i += 2){
-            magicNums.add(i*i);
+    public Spiral makeSquare(){
+        // Minus one because I start with setLeft()
+        posX = sideSize-1;
+        posY = sideSize;
+
+        int startValue = sideSize*sideSize;
+
+        for(double i = sideSize*sideSize; i > 0; i--){
+            //System.out.println("POS => x:" + posX + ", y:" + posY);
+
+            switch (lastMove){
+                case "left":
+                    setLeft(startValue);
+                    break;
+                case "right":
+                    setRight(startValue);
+                    break;
+                case "up":
+                    setUp(startValue);
+                    break;
+                case "down":
+                    setDown(startValue);
+                    break;
+                default:
+                    setLeft(startValue);
+                    break;
+            }
+
+            startValue--;
+        }
+
+        return this;
+    }
+
+    public void printSpiral(){
+        for (int[] y : matrix) {
+            for (int x : y) {
+                System.out.print(String.format("%03d", x) + "  ");
+            }
+            System.out.println("");
         }
     }
 
-    public Spiral fillSpiral(){
+    // Final goal of the day 3
+    public int getDistanceFromMiddle(int target){
+        int targetX = 0;
+        int targetY = 0;
 
-        for(int i = 1; i <= sideSize*sideSize; i++){
-            if(i == 1){
-                setMiddle(i);
-            }else if(i == 2){
-                setRight(i);
-            }else if(i == 3){
-                setUp(i);
-            }else{
-                if(magicNums.contains(i)){
-                    setRight(i);
+        for (int y = 0; y < matrix.length; y++) {
+            for (int x = 0; x < matrix.length; x++) {
+                if(target == matrix[x][y]){
+                    targetX = x;
+                    targetY = y;
                 }
-
-                // Need to know how many time I've to call setUp, setRight, setLeft, setDown
-
-
             }
         }
 
-        return this;
+        return Math.abs(getMiddlePos() - targetX) + Math.abs(getMiddlePos() - targetY);
     }
 
     // ------------------ Tools -------------------------------
-    private Spiral setMiddle(int value){
-        posX = getMiddlePos();
-        posY = getMiddlePos();
-
-        this.matrix[posX][posY] = value;
-
-        return this;
-    }
-
-    private Spiral setUp(int value){
-        posY--;
-        this.matrix[posX][posY] = value;
-        return this;
-    }
-
-    private Spiral setDown(int value){
-        posY++;
-        this.matrix[posX][posY] = value;
-        return this;
-    }
-
     private Spiral setLeft(int value){
-        posX--;
-        this.matrix[posX][posY] = value;
-        return this;
+        lastMove = "left";
+        if(posY-1 >= 0 && matrix[posX][posY-1] == 0){
+            posY--;
+            this.matrix[posX][posY] = value;
+            return this;
+        }
+
+        return (posY != 0 && matrix[posX][posY-1] == 1) ? this : setUp(value);
     }
 
     private Spiral setRight(int value){
-        posX++;
-        this.matrix[posX][posY] = value;
-        return this;
+        lastMove = "right";
+        if(posY+1 <= sideSize-1 && matrix[posX][posY+1] == 0){
+            posY++;
+            this.matrix[posX][posY] = value;
+            return this;
+        }
+        return setDown(value);
     }
 
+    private Spiral setUp(int value){
+        lastMove = "up";
+        if(posX-1 >= 0 && matrix[posX-1][posY] == 0){
+            posX--;
+            this.matrix[posX][posY] = value;
+            return this;
+        }
+        return setRight(value);
+    }
 
-
-
-
-
+    private Spiral setDown(int value){
+        lastMove = "down";
+        if(posX+1 <= sideSize-1 && matrix[posX+1][posY] == 0){
+            posX++;
+            this.matrix[posX][posY] = value;
+            return this;
+        }
+        return setLeft(value);
+    }
 
     // ------------------ GETTER AND SETTER -------------------------------
     public int getMiddlePos(){

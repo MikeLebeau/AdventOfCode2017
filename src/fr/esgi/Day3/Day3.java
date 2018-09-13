@@ -1,8 +1,5 @@
 package fr.esgi.Day3;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by LEBEAU Mike
  * ESGI - 5 AL 1
@@ -22,14 +19,14 @@ public class Day3 {
 
         */
 
-        //int target = 277678;
-        int target = 10;
+        int target = 277678;
 
+        int sideSize = findSideSize(target);
 
-//        int[][] matrix = new int[sideSize][sideSize];
-
-//        drawSpiral(target);
-
+        Spiral spiral = new Spiral(sideSize);
+        spiral.makeSquare();
+        spiral.printSpiral();
+        System.out.println("Distance entre le 1 (middle) et " + target + " (target): " + spiral.getDistanceFromMiddle(target));
     }
 
     /**
@@ -39,29 +36,10 @@ public class Day3 {
      */
     static int findSideSize(int target){
         int sideSize = 1;
-
-        while(sideSize*sideSize <= target){
+        while(sideSize*sideSize < target){
             sideSize += 2;
-
         }
-
         return sideSize;
     }
-
-//    static void drawSpiral(int target){
-//
-//        System.out.println("List size needed");
-//        for(int i = 1; i <= sideSize; i += 2){
-//            System.out.println("\t" + i + " : " + ((i*i)-1) );
-//        }
-//
-//        System.out.println("Target => " + target);
-//        System.out.println("SideSize => " + sideSize);
-//
-//        // Minus one because we start at 0
-//        System.out.println("Le 1 est en => " + (sideSize-1)/2 );
-//
-//
-//    }
 
 }
