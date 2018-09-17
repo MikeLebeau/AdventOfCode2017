@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class Day1 {
     public static void main(String args[])
-    {
-        // 1122 -> 1 + 2 = 3
+	{   
+		// 1122 -> 1 + 2 = 3
         // 1111 = 4
         // 1234 = 0
         // 91212129 = 9
@@ -26,13 +26,11 @@ public class Day1 {
         List<Integer> keepingNumbers = new ArrayList<>();
 
         int result = 0;
-
+        
         for(int i = 0; i < input.length(); i++){
-            if(i == input.length()-1){
-                if(input.charAt(i) == input.charAt(0)){
-                    keepingNumbers.add(Integer.parseInt("" + input.charAt(i)));
-                }
-            }else if(input.charAt(i) == input.charAt(i+1)){
+            int next = i + (input.length()/2);
+            
+            if(input.charAt(i) == input.charAt( next%input.length() )){
                 keepingNumbers.add(Integer.parseInt("" + input.charAt(i)));
             }
         }
@@ -43,5 +41,5 @@ public class Day1 {
 
         System.out.println("Sum size : " +  keepingNumbers.size());
         System.out.println("Sum : " +  result);
-    }
+	}
 }
