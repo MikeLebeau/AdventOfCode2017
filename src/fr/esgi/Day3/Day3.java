@@ -19,12 +19,15 @@ public class Day3 {
 
         */
 
-        int target = 277678;
+        int target = 20;
 
         int sideSize = findSideSize(target);
 
         Spiral spiral = new Spiral(sideSize);
-        spiral.makeSquare();
+
+//        spiral.makeSquare();
+        spiral.makeSpiralFromMiddle();
+
         spiral.printSpiral();
         System.out.println("Distance entre le 1 (middle) et " + target + " (target): " + spiral.getDistanceFromMiddle(target));
     }

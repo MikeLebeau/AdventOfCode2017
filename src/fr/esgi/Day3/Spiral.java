@@ -13,7 +13,8 @@ public class Spiral {
 
     private int[][] matrix;
 
-    private String lastMove = "none";
+    private Move lastMove;
+    private boolean fromMiddle;
 
     public Spiral(int sideSize) {
         posX = 0;
@@ -21,6 +22,37 @@ public class Spiral {
         this.sideSize = sideSize;
 
         matrix = new int[sideSize][sideSize];
+        lastMove = Move.NONE;
+    }
+
+    public Spiral makeSpiralFromMiddle(){
+        posX = (sideSize-1)/2;
+        posY = (sideSize-1)/2;
+
+        fromMiddle = true;
+
+        matrix[getMiddlePos()][getMiddlePos()] = 1;
+
+        for (int i = 2; i <= sideSize*sideSize; i++) {
+            switch (lastMove){
+                case LEFT:
+                    setDown(i);
+                    break;
+                case UP:
+                    setLeft(i);
+                    break;
+                case DOWN:
+                    setRight(i);
+                    break;
+                case RIGHT:
+                    setUp(i);
+                    break;
+                default:
+                    setRight(i);
+                    break;
+            }
+        }
+        return this;
     }
 
     public Spiral makeSquare(){
@@ -28,28 +60,14 @@ public class Spiral {
         posX = sideSize-1;
         posY = sideSize;
 
+        fromMiddle = false;
+
         int startValue = sideSize*sideSize;
 
         for(double i = sideSize*sideSize; i > 0; i--){
             //System.out.println("POS => x:" + posX + ", y:" + posY);
 
-            switch (lastMove){
-                case "left":
-                    setLeft(startValue);
-                    break;
-                case "right":
-                    setRight(startValue);
-                    break;
-                case "up":
-                    setUp(startValue);
-                    break;
-                case "down":
-                    setDown(startValue);
-                    break;
-                default:
-                    setLeft(startValue);
-                    break;
-            }
+            setNext(startValue, lastMove);
 
             startValue--;
         }
@@ -84,43 +102,83 @@ public class Spiral {
     }
 
     // ------------------ Tools -------------------------------
-    private Spiral setLeft(int value){
-        lastMove = "left";
+    private Spiral setNext(int value, Move direction){
+        switch (direction){
+            case LEFT:
+                setLeft(value);
+                break;
+            case RIGHT:
+                setRight(value);
+                break;
+            case UP:
+                setUp(value);
+                break;
+            case DOWN:
+                setDown(value);
+                break;
+            default:
+                setLeft(value);
+                break;
+        }
+
+        return this;
+    }
+
+    private int setLeft(int value){
+        lastMove = Move.LEFT;
+
         if(posY-1 >= 0 && matrix[posX][posY-1] == 0){
             posY--;
             this.matrix[posX][posY] = value;
-            return this;
+            return value;
         }
 
-        return (posY != 0 && matrix[posX][posY-1] == 1) ? this : setUp(value);
+        if(fromMiddle){
+            return (matrix[posX][posY-1] != 0) ? setUp(value) : value;
+        }
+        return (matrix[posX][posY-1] != 1) ? setUp(value) : value;
     }
 
-    private Spiral setRight(int value){
-        lastMove = "right";
+    private int setRight(int value){
+        lastMove = Move.RIGHT;
+
         if(posY+1 <= sideSize-1 && matrix[posX][posY+1] == 0){
             posY++;
             this.matrix[posX][posY] = value;
-            return this;
+            return value;
         }
+
+        if(fromMiddle){
+            return (matrix[posX][posY+1] != 0) ? setDown(value) : value;
+        }
+
         return setDown(value);
     }
 
-    private Spiral setUp(int value){
-        lastMove = "up";
+    private int setUp(int value){
+        lastMove = Move.UP;
         if(posX-1 >= 0 && matrix[posX-1][posY] == 0){
             posX--;
             this.matrix[posX][posY] = value;
-            return this;
+            return value;
+        }
+
+        if(fromMiddle){
+            return (matrix[posX-1][posY] != 0) ? setRight(value) : value;
         }
         return setRight(value);
     }
 
-    private Spiral setDown(int value){
-        lastMove = "down";
+    private int setDown(int value){
+        lastMove = Move.DOWN;
         if(posX+1 <= sideSize-1 && matrix[posX+1][posY] == 0){
             posX++;
             this.matrix[posX][posY] = value;
-            return this;
+            return value;
+        }
+
+        if(fromMiddle){
+            return (matrix[posX][posY+1] != 0) ? setLeft(value) : value;
         }
         return setLeft(value);
     }
