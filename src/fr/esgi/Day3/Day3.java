@@ -19,7 +19,8 @@ public class Day3 {
 
         */
 
-        int target = 20;
+        // For part two, 50 it's just result after some tries
+        int target = 50;
 
         int sideSize = findSideSize(target);
 
@@ -27,11 +28,11 @@ public class Day3 {
 
 //        spiral.makeSquare();
         spiral.makeSpiralFromMiddle();
-
         spiral.printSpiral();
 
-		System.out.println("Sum of square at (4, 4) : " + spiral.getSumOfSquare(4, 4));
-//        System.out.println("Distance entre le 1 (middle) et " + target + " (target): " + spiral.getDistanceFromMiddle(target));
+//		System.out.println("Sum of square at (0, 0)(Expected value => 11) : " + spiral.getSumOfSquare(0, 0));
+//		System.out.println("Sum of square at (1, 1)(Expected value => 44) : " + spiral.getSumOfSquare(1, 1));
+//      System.out.println("Distance entre le 1 (middle) et " + target + " (target): " + spiral.getDistanceFromMiddle(target));
     }
 
     /**

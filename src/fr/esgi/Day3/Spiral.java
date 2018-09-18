@@ -1,7 +1,6 @@
 package fr.esgi.Day3;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by LEBEAU Mike
@@ -95,9 +94,9 @@ public class Spiral {
     }
 
     public void printSpiral(){
-        for (int[] y : matrix) {
-            for (int x : y) {
-                System.out.print(String.format("%03d", x) + "  ");
+        for (int x = 0; x < matrix.length; x++) {
+            for (int y = 0; y < matrix[x].length; y++) {
+                System.out.print(String.format("%07d", getValue(x, y)) + "  ");
             }
             System.out.println("");
         }
@@ -121,67 +120,73 @@ public class Spiral {
     }
 
     // Final goal of the day 3 (Part two)
-    // OK, it's not sexy... but it is 4am... :P
-    public int getSumOfSquare(int x, int y){
+    private int getSumOfSquare(int x, int y){
 
         int result = 0;
 
-        List<String> listCalcul = new ArrayList<>();
+        Map<String, Integer> listValue = new HashMap<>();
 
         for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j < 1; j++) {
-            	if(i == 0 && j == 0){
+            for (int j = -1; j <= 1; j++) {
+                int tmpX = x+i;
+                int tmpY = y+j;
 
-				}else{
-					listCalcul.add((posX+i) + " + " + (posY+j) + " = " + getValue(posX+i, posY+j));
-					result += getValue(posX+i, posY+j);
-				}
+                if(tmpX < 0){
+                    tmpX = 0;
+                }
+
+                if(tmpX >= sideSize){
+                    tmpX = sideSize-1;
+                }
+
+                if(tmpY < 0){
+                    tmpY = 0;
+                }
+
+                if(tmpY >= sideSize){
+                    tmpY = sideSize-1;
+                }
+
+                if(tmpX == x && tmpY == y){
+                }else{
+                    listValue.put("(" + tmpX + "," + tmpY + ")", getValue(tmpX, tmpY));
+                }
+
+
             }
         }
 
-//        System.out.println("Pour (" + x + ", " + y + ") = " + result + " : ");
-//        printSpiral();
-//        for (String s : listCalcul) {
-//            System.out.println("\t" + s);
-//        }
+        for (Integer integer : listValue.values()) {
+//            System.out.println("Dans le set : " + integer);
+            result += integer;
+        }
 
         return result;
     }
 
+
     // ------------------ Tools -------------------------------
-    private int getValue(int x, int y){
-
-        if(x < sideSize && x >= 0 && y < sideSize && y >= 0){
-            return matrix[x][y];
-        }
-        return 0;
-    }
-
     private int setLeftAndMove(int value){
         lastMove = Move.LEFT;
-        // For part two
-//        value = getSumOfSquare(posX, posY-1);
 
         if(posY-1 >= 0 && matrix[posX][posY-1] == 0){
             posY--;
-            this.matrix[posX][posY] = value;
+            this.matrix[posX][posY] = (fromMiddle) ? getSumOfSquare(posX, posY) : value;
             return value;
         }
 
         if(fromMiddle){
-            return (matrix[posX][posY-1] != 0) ? setUpAndMove(value) : value;
+            return (matrix[posX][posY] != 0) ? setUpAndMove(value) : value;
         }
         return (matrix[posX][posY] != 1) ? setUpAndMove(value) : value;
     }
 
     private int setRightAndMove(int value){
         lastMove = Move.RIGHT;
-        // For part two
-//        value = getSumOfSquare(posX, posY+1);
 
         if(posY+1 <= sideSize-1 && matrix[posX][posY+1] == 0){
             posY++;
-            this.matrix[posX][posY] = value;
+            this.matrix[posX][posY] = (fromMiddle) ? getSumOfSquare(posX, posY) : value;
             return value;
         }
 
@@ -194,12 +199,10 @@ public class Spiral {
 
     private int setUpAndMove(int value){
         lastMove = Move.UP;
-        // For part two
-//        value = getSumOfSquare(posX-1, posY);
 
         if(posX-1 >= 0 && matrix[posX-1][posY] == 0){
             posX--;
-            this.matrix[posX][posY] = value;
+            this.matrix[posX][posY] = (fromMiddle) ? getSumOfSquare(posX, posY) : value;
             return value;
         }
 
@@ -211,12 +214,10 @@ public class Spiral {
 
     private int setDownAndMove(int value){
         lastMove = Move.DOWN;
-        // For part two
-//        value = getSumOfSquare(posX+1, posY);
 
         if(posX+1 <= sideSize-1 && matrix[posX+1][posY] == 0){
             posX++;
-            this.matrix[posX][posY] = value;
+            this.matrix[posX][posY] = (fromMiddle) ? getSumOfSquare(posX, posY) : value;
             return value;
         }
 
@@ -229,5 +230,9 @@ public class Spiral {
     // ------------------ GETTER AND SETTER -------------------------------
     public int getMiddlePos(){
         return (sideSize-1)/2;
+    }
+
+    private int getValue(int x, int y){
+        return matrix[x][y];
     }
 }

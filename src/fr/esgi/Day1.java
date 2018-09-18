@@ -23,23 +23,16 @@ public class Day1 {
         //String input = "1234";
         //String input = "91212129";
 
-        List<Integer> keepingNumbers = new ArrayList<>();
-
         int result = 0;
         
         for(int i = 0; i < input.length(); i++){
             int next = i + (input.length()/2);
             
             if(input.charAt(i) == input.charAt( next%input.length() )){
-                keepingNumbers.add(Integer.parseInt("" + input.charAt(i)));
+                result += Integer.parseInt("" + input.charAt(i));
             }
         }
 
-        for(Integer i : keepingNumbers){
-            result += i;
-        }
-
-        System.out.println("Sum size : " +  keepingNumbers.size());
         System.out.println("Sum : " +  result);
 	}
 }
