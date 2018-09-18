@@ -19,7 +19,7 @@ public class Day3 {
 
         */
 
-        int target = 20;
+        int target = 9;
 
         int sideSize = findSideSize(target);
 

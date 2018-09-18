@@ -1,5 +1,8 @@
 package fr.esgi.Day3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by LEBEAU Mike
  * ESGI - 5 AL 1
@@ -36,19 +39,19 @@ public class Spiral {
         for (int i = 2; i <= sideSize*sideSize; i++) {
             switch (lastMove){
                 case LEFT:
-                    setDown(i);
+                    setDownAndMove(i);
                     break;
                 case UP:
-                    setLeft(i);
+                    setLeftAndMove(i);
                     break;
                 case DOWN:
-                    setRight(i);
+                    setRightAndMove(i);
                     break;
                 case RIGHT:
-                    setUp(i);
+                    setUpAndMove(i);
                     break;
                 default:
-                    setRight(i);
+                    setRightAndMove(i);
                     break;
             }
         }
@@ -56,7 +59,7 @@ public class Spiral {
     }
 
     public Spiral makeSquare(){
-        // Minus one because I start with setLeft()
+        // Minus one because I start with setLeftAndMove()
         posX = sideSize-1;
         posY = sideSize;
 
@@ -64,10 +67,26 @@ public class Spiral {
 
         int startValue = sideSize*sideSize;
 
-        for(double i = sideSize*sideSize; i > 0; i--){
+        for(int i = sideSize*sideSize; i > 0; i--){
             //System.out.println("POS => x:" + posX + ", y:" + posY);
 
-            setNext(startValue, lastMove);
+            switch (lastMove){
+                case LEFT:
+                    setLeftAndMove(i);
+                    break;
+                case RIGHT:
+                    setRightAndMove(i);
+                    break;
+                case UP:
+                    setUpAndMove(i);
+                    break;
+                case DOWN:
+                    setDownAndMove(i);
+                    break;
+                default:
+                    setLeftAndMove(i);
+                    break;
+            }
 
             startValue--;
         }
@@ -78,7 +97,7 @@ public class Spiral {
     public void printSpiral(){
         for (int[] y : matrix) {
             for (int x : y) {
-                System.out.print(String.format("%03d", x) + "  ");
+                System.out.print(String.format("%02d", x) + "  ");
             }
             System.out.println("");
         }
@@ -101,31 +120,42 @@ public class Spiral {
         return Math.abs(getMiddlePos() - targetX) + Math.abs(getMiddlePos() - targetY);
     }
 
-    // ------------------ Tools -------------------------------
-    private Spiral setNext(int value, Move direction){
-        switch (direction){
-            case LEFT:
-                setLeft(value);
-                break;
-            case RIGHT:
-                setRight(value);
-                break;
-            case UP:
-                setUp(value);
-                break;
-            case DOWN:
-                setDown(value);
-                break;
-            default:
-                setLeft(value);
-                break;
+    // Final goal of the day 3 (Part two)
+    // OK, it's not sexy... but it is 4am... :P
+    private int getSumOfSquare(int x, int y){
+
+        int result = 0;
+
+        List<String> listCalcul = new ArrayList<>();
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j < 1; j++) {
+                listCalcul.add((posX+i) + " + " + (posY+j) + " = " + getValue(posX+i, posY+j));
+                result += getValue(posX+i, posY+j);
+            }
         }
 
-        return this;
+        System.out.println("Pour " + result + " : ");
+        for (String s : listCalcul) {
+            System.out.println("\t" + s);
+        }
+
+        return result;
     }
 
-    private int setLeft(int value){
+    // ------------------ Tools -------------------------------
+    private int getValue(int x, int y){
+
+        if(x < sideSize && x >= 0 && y < sideSize && y >= 0){
+            return matrix[x][y];
+        }
+        return 0;
+    }
+
+    private int setLeftAndMove(int value){
         lastMove = Move.LEFT;
+        // For part two
+        value = getSumOfSquare(posX, posY-1);
 
         if(posY-1 >= 0 && matrix[posX][posY-1] == 0){
             posY--;
@@ -134,13 +164,15 @@ public class Spiral {
         }
 
         if(fromMiddle){
-            return (matrix[posX][posY-1] != 0) ? setUp(value) : value;
+            return (matrix[posX][posY-1] != 0) ? setUpAndMove(value) : value;
         }
-        return (matrix[posX][posY-1] != 1) ? setUp(value) : value;
+        return (matrix[posX][posY] != 1) ? setUpAndMove(value) : value;
     }
 
-    private int setRight(int value){
+    private int setRightAndMove(int value){
         lastMove = Move.RIGHT;
+        // For part two
+        value = getSumOfSquare(posX, posY+1);
 
         if(posY+1 <= sideSize-1 && matrix[posX][posY+1] == 0){
             posY++;
@@ -149,14 +181,17 @@ public class Spiral {
         }
 
         if(fromMiddle){
-            return (matrix[posX][posY+1] != 0) ? setDown(value) : value;
+            return (matrix[posX][posY+1] != 0) ? setDownAndMove(value) : value;
         }
 
-        return setDown(value);
+        return setDownAndMove(value);
     }
 
-    private int setUp(int value){
+    private int setUpAndMove(int value){
         lastMove = Move.UP;
+        // For part two
+        value = getSumOfSquare(posX-1, posY);
+
         if(posX-1 >= 0 && matrix[posX-1][posY] == 0){
             posX--;
             this.matrix[posX][posY] = value;
@@ -164,13 +199,16 @@ public class Spiral {
         }
 
         if(fromMiddle){
-            return (matrix[posX-1][posY] != 0) ? setRight(value) : value;
+            return (matrix[posX-1][posY] != 0) ? setRightAndMove(value) : value;
         }
-        return setRight(value);
+        return setRightAndMove(value);
     }
 
-    private int setDown(int value){
+    private int setDownAndMove(int value){
         lastMove = Move.DOWN;
+        // For part two
+        value = getSumOfSquare(posX+1, posY);
+
         if(posX+1 <= sideSize-1 && matrix[posX+1][posY] == 0){
             posX++;
             this.matrix[posX][posY] = value;
@@ -178,45 +216,13 @@ public class Spiral {
         }
 
         if(fromMiddle){
-            return (matrix[posX][posY+1] != 0) ? setLeft(value) : value;
+            return (matrix[posX][posY+1] != 0) ? setLeftAndMove(value) : value;
         }
-        return setLeft(value);
+        return setLeftAndMove(value);
     }
 
     // ------------------ GETTER AND SETTER -------------------------------
     public int getMiddlePos(){
         return (sideSize-1)/2;
-    }
-
-    public int getPosX() {
-        return posX;
-    }
-
-    public void setPosX(int posX) {
-        this.posX = posX;
-    }
-
-    public int getPosY() {
-        return posY;
-    }
-
-    public void setPosY(int posY) {
-        this.posY = posY;
-    }
-
-    public int getSideSize() {
-        return sideSize;
-    }
-
-    public void setSideSize(int sideSize) {
-        this.sideSize = sideSize;
-    }
-
-    public int[][] getMatrix() {
-        return matrix;
-    }
-
-    public void setMatrix(int[][] matrix) {
-        this.matrix = matrix;
     }
 }
