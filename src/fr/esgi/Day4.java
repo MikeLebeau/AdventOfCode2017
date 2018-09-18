@@ -1,6 +1,8 @@
 package fr.esgi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -542,8 +544,16 @@ public class Day4 {
             boolean ok = true;
 
             for(String word : line.split("\\s+")){
-                if( ! wordList.contains(word)){
-                    wordList.add(word);
+
+                char[] wordArray = word.toCharArray();
+                Arrays.sort(wordArray);
+                String newWord = new String(wordArray);
+
+                System.out.println("Word avant : " + word);
+                System.out.println("Word apres : " + newWord);
+
+                if( ! wordList.contains(newWord)){
+                    wordList.add(newWord);
                 }else{
                     ok = false;
                     invalid++;
