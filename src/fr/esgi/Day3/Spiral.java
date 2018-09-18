@@ -97,7 +97,7 @@ public class Spiral {
     public void printSpiral(){
         for (int[] y : matrix) {
             for (int x : y) {
-                System.out.print(String.format("%02d", x) + "  ");
+                System.out.print(String.format("%03d", x) + "  ");
             }
             System.out.println("");
         }
@@ -122,7 +122,7 @@ public class Spiral {
 
     // Final goal of the day 3 (Part two)
     // OK, it's not sexy... but it is 4am... :P
-    private int getSumOfSquare(int x, int y){
+    public int getSumOfSquare(int x, int y){
 
         int result = 0;
 
@@ -130,15 +130,20 @@ public class Spiral {
 
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j < 1; j++) {
-                listCalcul.add((posX+i) + " + " + (posY+j) + " = " + getValue(posX+i, posY+j));
-                result += getValue(posX+i, posY+j);
+            	if(i == 0 && j == 0){
+
+				}else{
+					listCalcul.add((posX+i) + " + " + (posY+j) + " = " + getValue(posX+i, posY+j));
+					result += getValue(posX+i, posY+j);
+				}
             }
         }
 
-        System.out.println("Pour " + result + " : ");
-        for (String s : listCalcul) {
-            System.out.println("\t" + s);
-        }
+//        System.out.println("Pour (" + x + ", " + y + ") = " + result + " : ");
+//        printSpiral();
+//        for (String s : listCalcul) {
+//            System.out.println("\t" + s);
+//        }
 
         return result;
     }
@@ -155,7 +160,7 @@ public class Spiral {
     private int setLeftAndMove(int value){
         lastMove = Move.LEFT;
         // For part two
-        value = getSumOfSquare(posX, posY-1);
+//        value = getSumOfSquare(posX, posY-1);
 
         if(posY-1 >= 0 && matrix[posX][posY-1] == 0){
             posY--;
@@ -172,7 +177,7 @@ public class Spiral {
     private int setRightAndMove(int value){
         lastMove = Move.RIGHT;
         // For part two
-        value = getSumOfSquare(posX, posY+1);
+//        value = getSumOfSquare(posX, posY+1);
 
         if(posY+1 <= sideSize-1 && matrix[posX][posY+1] == 0){
             posY++;
@@ -181,7 +186,7 @@ public class Spiral {
         }
 
         if(fromMiddle){
-            return (matrix[posX][posY+1] != 0) ? setDownAndMove(value) : value;
+            return (matrix[posX][posY] != 0) ? setDownAndMove(value) : value;
         }
 
         return setDownAndMove(value);
@@ -190,7 +195,7 @@ public class Spiral {
     private int setUpAndMove(int value){
         lastMove = Move.UP;
         // For part two
-        value = getSumOfSquare(posX-1, posY);
+//        value = getSumOfSquare(posX-1, posY);
 
         if(posX-1 >= 0 && matrix[posX-1][posY] == 0){
             posX--;
@@ -207,7 +212,7 @@ public class Spiral {
     private int setDownAndMove(int value){
         lastMove = Move.DOWN;
         // For part two
-        value = getSumOfSquare(posX+1, posY);
+//        value = getSumOfSquare(posX+1, posY);
 
         if(posX+1 <= sideSize-1 && matrix[posX+1][posY] == 0){
             posX++;

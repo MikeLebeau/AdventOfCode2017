@@ -19,7 +19,7 @@ public class Day3 {
 
         */
 
-        int target = 9;
+        int target = 20;
 
         int sideSize = findSideSize(target);
 
@@ -29,7 +29,9 @@ public class Day3 {
         spiral.makeSpiralFromMiddle();
 
         spiral.printSpiral();
-        System.out.println("Distance entre le 1 (middle) et " + target + " (target): " + spiral.getDistanceFromMiddle(target));
+
+		System.out.println("Sum of square at (4, 4) : " + spiral.getSumOfSquare(4, 4));
+//        System.out.println("Distance entre le 1 (middle) et " + target + " (target): " + spiral.getDistanceFromMiddle(target));
     }
 
     /**
