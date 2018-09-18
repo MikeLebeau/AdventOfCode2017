@@ -549,9 +549,6 @@ public class Day4 {
                 Arrays.sort(wordArray);
                 String newWord = new String(wordArray);
 
-                System.out.println("Word avant : " + word);
-                System.out.println("Word apres : " + newWord);
-
                 if( ! wordList.contains(newWord)){
                     wordList.add(newWord);
                 }else{

@@ -1107,9 +1107,13 @@ public class Day5 {
         do{
             int tmp = actualPos;
             actualPos += numList.get(actualPos);
-            
-            numList.set(tmp, numList.get(tmp) + 1);
-            
+
+            if(numList.get(tmp) >= 3){
+                numList.set(tmp, numList.get(tmp) - 1);
+            }else{
+                numList.set(tmp, numList.get(tmp) + 1);
+            }
+
             numSteps++;
         }while(actualPos+numList.get(actualPos) < numList.size());
         
