@@ -5,38 +5,42 @@ import java.util.List;
 
 public class Node {
 
-    private Day7.Node father;
-    private List<Day7.Node> child;
+    private Node father;
+    private List<Node> children;
     private int value;
     private String name;
 
     public Node(String name, int value) {
         this.name = name;
         this.value = value;
-        child = new ArrayList<>();
+		children = new ArrayList<>();
         father = null;
     }
 
-    public Node(String name, int value, List<Day7.Node> child) {
+    public Node(String name, int value, List<Node> children) {
         this.name = name;
-        this.child = child;
+        this.children = children;
         this.value = value;
         father = null;
     }
 
-    public Node(String name, int value, List<Day7.Node> child, Day7.Node father) {
+    public Node(String name, int value, List<Node> children, Node father) {
         this.name = name;
         this.father = father;
-        this.child = child;
+        this.children = children;
         this.value = value;
     }
 
-    public List<Day7.Node> getChild() {
-        return child;
+    public void addChild(Node child){
+    	children.add(child);
+	}
+
+    public List<Node> getChildren() {
+        return children;
     }
 
-    public void setChild(List<Day7.Node> child) {
-        this.child = child;
+    public void setChildren(List<Node> children) {
+        this.children = children;
     }
 
     public int getValue() {
@@ -47,11 +51,11 @@ public class Node {
         this.value = value;
     }
 
-    public Day7.Node getFather() {
+    public Node getFather() {
         return father;
     }
 
-    public void setFather(Day7.Node father) {
+    public void setFather(Node father) {
         this.father = father;
     }
 
@@ -62,5 +66,27 @@ public class Node {
     public void setName(String name) {
         this.name = name;
     }
+
+    public int getWeight(){
+    	int weight = value;
+
+		for (Node child : children) {
+			weight += child.getWeight();
+		}
+
+    	return weight;
+	}
+
+	public int getDepth(){
+    	int depth = 1;
+		boolean ok = false;
+
+    	while( ! ok && ! children.isEmpty()){
+			depth += children.get(0).getDepth();
+			ok = true;
+		}
+
+		return depth;
+	}
 
 }
