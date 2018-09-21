@@ -1,11 +1,6 @@
 package fr.esgi.Day7;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1326,7 +1321,6 @@ public class Day7 {
             Group 2 = \(([0-9]+)\)    => To get the value
             Group 3 = ([a-z].*[a-z])  => To get child
          */
-
 		Pattern pattern = Pattern.compile("([a-z]+)\\s+\\(([0-9]+)\\)(?:\\s+->\\s+(.*))?");
 		Matcher matcher;
 
@@ -1358,39 +1352,74 @@ public class Day7 {
 			}
 		}
 
-		Node ultimateFather = null;
+		// Find the ultimate father
+		Node ultimateFather = findUltimateFather(nodeMap);
 
-		for (Node node : nodeMap.values()) {
-			if (node.getFather() == null) {
-				System.out.println("The ultimate father : " + node.getName());
-				ultimateFather = node;
-			}
-		}
+//		System.out.println("Depth : " + ultimateFather.getDepth());
 
-		System.out.println("Depth : " + ultimateFather.getDepth());
+		findblabla(ultimateFather);
 
-		Map<Node, Integer> weightNode = new TreeMap<>();
+//        System.out.println("Deviant de " + ultimateFather.getName() + " : " + ultimateFather.getDeviantChild().getName());
 
-		for (Node child : ultimateFather.getChildren()) {
-			System.out.println("Weight of " + child.getName() + " : ");
-			System.out.println("\tTotal : " + child.getWeight());
-			System.out.println("\tPersonal : " + child.getValue());
-
-			weightNode.put(child, child.getWeight());
-		}
-
-		System.out.println("--------------------------------------------------------------");
-
-		findDeviant(weightNode);
 	}
 
-	static Node findDeviant(Map<Node, Integer> weightNode){
-		Node deviant;
+    /**
+     * Ultimate Father = root
+     *
+     * @param nodeMap
+     * @return The only one node without father
+     */
+	static Node findUltimateFather(Map<String, Node> nodeMap){
+        for (Node node : nodeMap.values()) {
+            if (node.getFather() == null) {
+                return node;
+            }
+        }
+
+        return null;
+    }
 
 
+    static Node findblabla(Node node){
+        Map<Node, Integer> weightNode = new HashMap<>();
 
-		weightNode.
+        if(node == null){
+            System.out.println("C'est lui celui d'avant");
+            return null;
+        }
 
-		return deviant;
-	}
+
+        System.out.println("Father : " + node.getName());
+        for (Node child : node.getChildren()) {
+            System.out.println("Weight of " + child.getName() + " : ");
+            System.out.println("\tTotal : " + child.getWeight());
+            System.out.println("\tPersonal : " + child.getValue());
+
+            weightNode.put(child, child.getWeight());
+        }
+
+        System.out.println("--------------------------------------------------------------");
+        Node deviant = node.getDeviantChild();
+
+        if(deviant == null){
+            for (Node child : node.getFather().getChildren()) {
+                System.out.println("Total " + child.getName() + " : " + child.getWeight());
+            }
+
+            System.out.println("Deviant weight : " + node.getFather().getDeviantChild().getWeight());
+            System.out.println("Normal weight : " + node.getFather().getNormalChild().getWeight());
+
+            int deviantWeight = node.getFather().getDeviantChild().getWeight();
+            int normalWeight = node.getFather().getNormalChild().getWeight();
+            int minus = Math.abs(deviantWeight-normalWeight);
+
+            System.out.println("Result : " + (node.getValue() - minus) );
+
+            return node;
+        }else{
+            findblabla(deviant);
+        }
+
+        return null;
+    }
 }

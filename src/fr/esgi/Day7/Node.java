@@ -1,7 +1,9 @@
 package fr.esgi.Day7;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Node {
 
@@ -89,4 +91,49 @@ public class Node {
 		return depth;
 	}
 
+    /**
+     * Globaly :
+     * -> I check if the node has 2 children, in this case I return first node because we don't care
+     * -> Otherwise, I put in map : node value as key and node in list as value
+     *
+     * @return I return the node which has only one as size of map value
+     */
+    public Node getDeviantChild(){
+        Map<Integer, List<Node>> map = new HashMap<>();
+
+        // If the node has just 2 children
+        if(children.size() > 0 && children.size() <= 2){
+            return children.get(0);
+        }
+
+        for (Node child : children) {
+            if(!map.containsKey(child.getWeight())){
+                List<Node> nodeList = new ArrayList<>();
+                map.put(child.getWeight(), nodeList);
+            }
+
+            map.get(child.getWeight()).add(child);
+        }
+
+        for (Integer integer : map.keySet()) {
+            if(map.get(integer).size() == 1){
+                return map.get(integer).get(0);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return a random normal child
+     * @return null if normal child not found
+     */
+    public Node getNormalChild(){
+        for (Node child : children) {
+            if( ! child.getName().equals(getDeviantChild().getName())){
+                return child;
+            }
+        }
+        return null;
+    }
 }
