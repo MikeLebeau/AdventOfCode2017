@@ -1,7 +1,5 @@
 package fr.esgi;
 
-import com.sun.deploy.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,49 +17,76 @@ public class Day10 {
 
         int[] sequenceNum = createFulfilledIntArray(sizeArray);
 
-        String line = convertToAsciiCode(inputTest);
-        line = addSuffix(line);
-		System.out.println("Sequence : " + line);
-        String[] inputSequence = line.split(",44,");
-
-//		for (int i = 0; i < 64; i++) {
-//			doProcess(inputSequence, sequenceNum, 0, 0);
-//		}
-
-		System.out.println("Sequence : " + Arrays.toString(inputSequence));
-		doProcess(inputSequence, sequenceNum, 0, 0);
-
-//      printIntArray(sequenceNum);
+        doProcess(input.split(","), sequenceNum, 1);
         System.out.println(sequenceNum[0] + " x " + sequenceNum[1] + " = " + (sequenceNum[0]*sequenceNum[1]));
 
+        // ----------------------------- PART TWO -----------------------------
+        sequenceNum = createFulfilledIntArray(sizeArray);
+        String line = convertToAsciiCode(input);
+        line = addSuffix(line);
+
+        System.out.println("Line : " + line);
+
+        doProcess(line.split(","), sequenceNum, 64);
+
+        System.out.println("Sparse Hash : " + Arrays.toString(sequenceNum));
+
+        List<Integer> denseHashResult = new ArrayList<>(16);
+        int denseHashTmp = 0;
+        for (int i = 1; i <= sequenceNum.length; i++) {
+            denseHashTmp ^= sequenceNum[i-1];
+
+            if(i%16 == 0){
+                denseHashResult.add(denseHashTmp);
+                denseHashTmp = 0;
+            }
+        }
+
+        System.out.println("Dense Hash : " + denseHashResult);
+
+        String knotHash = "";
+        for (Integer integer : denseHashResult) {
+            knotHash += Integer.toHexString(integer);
+        }
+
+        System.out.println("Knot Hash : " + knotHash);
     }
 
-    static void doProcess(String[] inputSequence, int[] sequenceNum, int startAt, int skipSize){
-		for (int i = 0; i < inputSequence.length; i++) {
-			int[] subArray;
+    static void doProcess(String[] inputSequence, int[] sequenceNum, int nbRound){
+        int startAt = 0;
+        int skipSize = 0;
 
-			int length = Integer.parseInt(inputSequence[i]);
+        for (int k = 0; k < nbRound; k++) {
+            for (int i = 0; i < inputSequence.length; i++) {
+                int[] subArray;
 
-			subArray = copyOfRange(sequenceNum, startAt, length);
-			subArray = reverseArray(subArray);
+                int length = Integer.parseInt(inputSequence[i]);
 
-			for (int i1 = 0; i1 < subArray.length; i1++) {
-				int index = (i1+startAt)%sequenceNum.length;
+                subArray = copyOfRange(sequenceNum, startAt, length);
+                subArray = reverseArray(subArray);
 
-				sequenceNum[index] = subArray[i1];
-			}
+                for (int i1 = 0; i1 < subArray.length; i1++) {
+                    int index = (i1+startAt)%sequenceNum.length;
 
-			startAt += length;
-			startAt += skipSize;
-			skipSize++;
-			printIntArray(sequenceNum);
-		}
+                    sequenceNum[index] = subArray[i1];
+                }
+
+                startAt += length;
+                startAt += skipSize;
+                skipSize++;
+            }
+        }
+
 	}
 
     static String convertToAsciiCode(String line){
 		String result = "";
 		for (int i = 0; i < line.toCharArray().length; i++) {
-			result += String.valueOf((int)line.charAt(i));
+//		    if(line.charAt(i) == ','){
+//		        continue;
+//            }
+            result += String.valueOf((int)line.charAt(i));
+
 			result += (i != (line.length()-1)) ? "," : "";
 		}
 
