@@ -1,7 +1,78 @@
 package fr.esgi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+enum DIRECTIONS{
+    N("n"),
+    S("s"),
+    SE("se"),
+    SW("sw"),
+    NW("nw"),
+    NE("ne");
+
+    String directionValue;
+
+    DIRECTIONS(String directionValue) {
+        this.directionValue = directionValue;
+    }
+
+    public static DIRECTIONS getEnumFromString(String value){
+        switch (value){
+            case "n":
+                return N;
+            case "ne":
+                return NE;
+            case "nw":
+                return NW;
+            case "s":
+                return S;
+            case "se":
+                return SE;
+            case "sw":
+                return SW;
+            default:
+                return null;
+        }
+    }
+
+    public List<DIRECTIONS> canReduceWith(){
+        List<DIRECTIONS> list = new ArrayList<>(2);
+
+        switch (directionValue){
+            case "n":
+                list.add(SW);
+                list.add(SE);
+                break;
+            case "ne":
+                list.add(NW);
+                list.add(S);
+                break;
+            case "nw":
+                list.add(NE);
+                list.add(S);
+                break;
+            case "s":
+                list.add(NW);
+                list.add(NE);
+                break;
+            case "se":
+                list.add(N);
+                list.add(SW);
+                break;
+            case "sw":
+                list.add(NW);
+                list.add(SE);
+                break;
+            default:
+                break;
+        }
+
+        return list;
+    }
+}
 
 public class Day11 {
 
@@ -13,44 +84,132 @@ public class Day11 {
 
         String inputTest = "ne,ne,s,s";
 
-        for (String s : inputTest.split(",")) {
+        notFunnyVersion(input);
+
+    }
+
+    static void notFunnyVersion(String input){
+        int x = 0;
+        int y = 0;
+        int z = 0;
+
+        int maxDistance = 0;
+
+        for (String s : input.split(",")) {
             switch (s){
                 case "n":
-                    checkMove(s, "s");
+                    y++;
+                    z--;
                     break;
                 case "ne":
-                    checkMove(s, "sw");
+                    x++;
+                    z--;
                     break;
                 case "nw":
-                    checkMove(s, "se");
+                    y++;
+                    x--;
                     break;
                 case "s":
-                    checkMove(s, "n");
+                    z++;
+                    y--;
                     break;
                 case "se":
-                    checkMove(s, "nw");
+                    x++;
+                    y--;
                     break;
                 case "sw":
-                    checkMove(s, "ne");
+                    z++;
+                    x--;
                     break;
                 default:
                     break;
             }
+
+            if(maxDistance < distanceInGrid(x, y, z)){
+                maxDistance = distanceInGrid(x, y, z);
+            }
         }
 
-        System.out.println("Number of move : " + moveList.size());
+        System.out.println("X : " + x);
+        System.out.println("Y : " + y);
+        System.out.println("Z : " + z);
 
+        System.out.println("Distance to dude : " + distanceInGrid(x, y, z));
+        System.out.println("Distance max : " + maxDistance);
     }
 
-    static void checkCombine(String m1, String m2){
+    static void funnyVersion(String input){
+        Map<DIRECTIONS, Integer> moveMap = new HashMap<>();
+        moveMap.put(DIRECTIONS.N, 0);
+        moveMap.put(DIRECTIONS.S, 0);
+        moveMap.put(DIRECTIONS.SE, 0);
+        moveMap.put(DIRECTIONS.SW, 0);
+        moveMap.put(DIRECTIONS.NW, 0);
+        moveMap.put(DIRECTIONS.NE, 0);
 
-    }
 
-    static void checkMove(String move, String op){
-        if(moveList.contains(op)){
-            moveList.remove(op);
-        }else {
-            moveList.add(move);
+        for (String s : input.split(",")) {
+            moveMap.put(DIRECTIONS.getEnumFromString(s) , moveMap.get(DIRECTIONS.getEnumFromString(s))+1);
         }
+
+        System.out.println(moveMap);
+
+        if(moveMap.get(DIRECTIONS.N)-moveMap.get(DIRECTIONS.S) > 0){
+            moveMap.put(DIRECTIONS.N, moveMap.get(DIRECTIONS.N)-moveMap.get(DIRECTIONS.S));
+            moveMap.remove(DIRECTIONS.S);
+        }else{
+            moveMap.put(DIRECTIONS.S, moveMap.get(DIRECTIONS.S)-moveMap.get(DIRECTIONS.N));
+            moveMap.remove(DIRECTIONS.N);
+        }
+
+        if(moveMap.get(DIRECTIONS.NE)-moveMap.get(DIRECTIONS.SW) > 0){
+            moveMap.put(DIRECTIONS.NE, moveMap.get(DIRECTIONS.NE)-moveMap.get(DIRECTIONS.SW));
+            moveMap.remove(DIRECTIONS.SW);
+        }else{
+            moveMap.put(DIRECTIONS.SW, moveMap.get(DIRECTIONS.SW)-moveMap.get(DIRECTIONS.NE));
+            moveMap.remove(DIRECTIONS.NE);
+        }
+
+        if(moveMap.get(DIRECTIONS.NW)-moveMap.get(DIRECTIONS.SE) > 0){
+            moveMap.put(DIRECTIONS.NW, moveMap.get(DIRECTIONS.NW)-moveMap.get(DIRECTIONS.SE));
+            moveMap.remove(DIRECTIONS.SE);
+        }else{
+            moveMap.put(DIRECTIONS.SE, moveMap.get(DIRECTIONS.SE)-moveMap.get(DIRECTIONS.NW));
+            moveMap.remove(DIRECTIONS.NW);
+        }
+
+        System.out.println(moveMap);
+
+        moveMap = checkCombineAndReduce(moveMap);
+
+        System.out.println(moveMap);
+
+        int result = 0;
+
+        for (Integer value : moveMap.values()) {
+            result += value;
+        }
+
+        System.out.println("Number of move : " + result);
+        System.out.println("input.split(\",\").length : " + input.split(",").length);
+    }
+
+    static int distanceInGrid(int x, int y, int z){
+        return (Math.abs(0 - x) + Math.abs(0 - y) + Math.abs(0 - z)) / 2;
+    }
+
+    static Map<DIRECTIONS, Integer> checkCombineAndReduce(Map<DIRECTIONS, Integer> map){
+        for (DIRECTIONS direction : map.keySet()) {
+            if (map.containsKey(direction.canReduceWith().get(0))){
+                int reduceValue = map.get(direction.canReduceWith().get(0));
+                map.put(direction, (map.get(direction)-reduceValue > 0)? map.get(direction)-reduceValue : 0);
+                return map;
+            }else if(map.containsKey(direction.canReduceWith().get(1))){
+                int reduceValue = map.get(direction.canReduceWith().get(1));
+                map.put(direction, (map.get(direction)-reduceValue > 0)? map.get(direction)-reduceValue : 0);
+                return map;
+            }
+        }
+        return map;
     }
 }
