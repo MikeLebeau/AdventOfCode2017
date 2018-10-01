@@ -1,4 +1,4 @@
-package fr.esgi;
+package fr.esgi.Day12;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class Day12 {
     public static void main(String[] args) {
 
-        String input = "0 <-> 480, 1750\n" +
+        String inputForTest = "0 <-> 480, 1750\n" +
                 "1 <-> 52, 393, 635, 800, 840\n" +
                 "2 <-> 575, 1950\n" +
                 "3 <-> 1188, 1527\n" +
@@ -2017,29 +2017,33 @@ public class Day12 {
                 "5 <-> 6\n" +
                 "6 <-> 4, 5";
 
-
         List<Program> programs = new ArrayList<>();
 
         Pattern pattern = Pattern.compile("([0-9]+)\\s<->\\s(.*)");
         Matcher matcher;
 
-        for (String s : inputTest.split("\n")) {
+        String input = inputForTest;
+
+        for (String s : input.split("\n")) {
             matcher = pattern.matcher(s);
             if(matcher.find()){
-                Program newProgram = new Program(matcher.group(1));
-                for (String s1 : matcher.group(2).split(",\\s+")) {
-                    if(!s1.equals(matcher.group(1))) {
-                        newProgram.addConnectedProgram(new Program(s1));
-                    }
-                }
-
-                programs.add(newProgram);
+                programs.add(new Program(matcher.group(1)));
             }
         }
 
+        for (int i = 0; i < input.split("\n").length; i++) {
+            matcher = pattern.matcher(input.split("\n")[i]);
+            if(matcher.find()){
+                for (String s1 : matcher.group(2).split(",\\s+")) {
+                    programs.get(i).addConnectedProgram(programs.get(Integer.parseInt(s1)));
+                }
+            }
+        }
 
-        System.out.println(programs);
-
+        for (Program program : programs) {
+            System.out.println(program);
+        }
+        System.out.println("--------------------------------------------------------------------");
 
         int nbConnectedToZero = 0;
         List<Program> notConnectedToZero = new ArrayList<>();
@@ -2050,78 +2054,23 @@ public class Day12 {
             }else{
                 notConnectedToZero.add(program);
             }
+            resetProgramCheck(programs);
         }
-//        System.out.println("----------------------------------------------------------------------------");
-//        System.out.println("Number of connected program : " + programs.get(1).connectedPrograms.size());
-//        System.out.println("Program 1 = " + programs.get(1).isConnectedToZero());
-//        System.out.println("----------------------------------------------------------------------------");
 
         System.out.println("Number of programs connected to 0 => " + nbConnectedToZero);
         System.out.println("Number of programs not connected to 0 => " + notConnectedToZero.size());
 
+        System.out.println("--------------------------------------------------------------------");
 
-
-        System.out.println("Not Connected To Zero : ");
-        for (Program program : notConnectedToZero) {
-            System.out.println("\t" + program);
-        }
+//        System.out.println("Not Connected To Zero : ");
+//        for (Program program : notConnectedToZero) {
+//            System.out.println("\t" + program);
+//        }
     }
 
-    static class Program{
-
-        static List<Program> connectedPrograms;
-        String id;
-
-        public Program(String id) {
-            this.id = id;
-            connectedPrograms = new ArrayList<>();
-        }
-
-        public Program(List<Program> connectedPrograms, String id) {
-            this.connectedPrograms = connectedPrograms;
-            this.id = id;
-        }
-
-        void addConnectedProgram(Program program){
-            connectedPrograms.add(program);
-        }
-
-        public boolean isDirectlyConnected(String id){
-            if(id.equals(this.id)){
-                throw new UnsupportedOperationException("isDirectlyConnected(" + id + "), this.id = " + this.id );
-            }
-            for (Program connectedProgram : connectedPrograms) {
-                if(id.equals(connectedProgram.id)){
-                    return  true;
-                }
-            }
-            return false;
-        }
-
-        public boolean isConnectedToZero(){
-            return isConnectedTo("0");
-        }
-
-        public boolean isConnectedTo(String targetId){
-            if(!targetId.equals(this.id) && isDirectlyConnected(targetId)){
-                return true;
-            }
-
-            for (Program connectedProgram : connectedPrograms) {
-                return connectedProgram.isConnectedTo(targetId);
-            }
-            return false;
-        }
-
-        public String toString(){
-            String result = "";
-            result += "" + id;
-            result += " <->";
-            for (Program connectedProgram : connectedPrograms) {
-                result += " " + connectedProgram.id;
-            }
-
-            return result;
+    static void resetProgramCheck(List<Program> programs){
+        for (Program program : programs) {
+            program.checked = false;
         }
     }
 }
