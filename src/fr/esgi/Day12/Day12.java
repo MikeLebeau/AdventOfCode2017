@@ -2015,7 +2015,7 @@ public class Day12 {
                 "3 <-> 2, 4\n" +
                 "4 <-> 2, 3, 6\n" +
                 "5 <-> 6\n" +
-                "6 <-> 4, 5";
+                "6 <-> 5, 4";
 
         List<Program> programs = new ArrayList<>();
 
@@ -2039,11 +2039,13 @@ public class Day12 {
                 }
             }
         }
-
+        System.out.println("--------------------------------------------------------------------");
+        System.out.println("-- PRINT PROGRAMS --");
         for (Program program : programs) {
             System.out.println(program);
         }
         System.out.println("--------------------------------------------------------------------");
+        System.out.println("-- CHECK NUMBER OF PROGRAM CONNECTED TO ZERO --");
 
         int nbConnectedToZero = 0;
         List<Program> notConnectedToZero = new ArrayList<>();
@@ -2054,23 +2056,30 @@ public class Day12 {
             }else{
                 notConnectedToZero.add(program);
             }
-            resetProgramCheck(programs);
         }
 
         System.out.println("Number of programs connected to 0 => " + nbConnectedToZero);
         System.out.println("Number of programs not connected to 0 => " + notConnectedToZero.size());
 
         System.out.println("--------------------------------------------------------------------");
-
-//        System.out.println("Not Connected To Zero : ");
+//        System.out.println("-- PRINT PROGRAM NON CONNECTED TO ZERO --");
+//
 //        for (Program program : notConnectedToZero) {
 //            System.out.println("\t" + program);
 //        }
+
+        test(programs, "0", new ArrayList<>());
     }
 
-    static void resetProgramCheck(List<Program> programs){
+    static void test(List<Program> programs, String targetId, List<String> checked){
         for (Program program : programs) {
-            program.checked = false;
+            checked.add(program.id);
+            System.out.println("Id : " + program.id);
+            for (Program connectedProgram : program.connectedPrograms) {
+                if(!checked.contains(connectedProgram.id)){
+                    test(connectedProgram.connectedPrograms, targetId, checked);
+                }
+            }
         }
     }
 }

@@ -54,11 +54,11 @@ public class Day13 {
 
         String input = inputTest;
 
-        int[][] firewall = new int[];
-
-        for (String s : input.split("\n")) {
-
-        }
+//        int[][] firewall = new int[];
+//
+//        for (String s : input.split("\n")) {
+//
+//        }
 
     }
 }

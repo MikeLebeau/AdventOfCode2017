@@ -7,25 +7,36 @@ public class Program {
 
     List<Program> connectedPrograms;
     String id;
-    boolean checked;
 
     public Program(String id) {
         this.id = id;
         connectedPrograms = new ArrayList<>();
-        checked = false;
     }
 
     public Program(List<Program> connectedPrograms, String id) {
         this.connectedPrograms = connectedPrograms;
         this.id = id;
-        checked = false;
     }
 
     void addConnectedProgram(Program program){
         connectedPrograms.add(program);
     }
 
+    private boolean isCompletlyChecked(List<String> checkedList){
+        int res = 0;
+        for (Program connectedProgram : connectedPrograms) {
+            if(connectedProgram.id.equals(id)){
+                res++;
+            }
+        }
+
+        return (res == connectedPrograms.size());
+    }
+
     public boolean isDirectlyConnected(String id){
+        if(this.id.equals(id)){
+            return true;
+        }
         for (Program connectedProgram : connectedPrograms) {
             if(id.equals(connectedProgram.id)){
                 return true;
@@ -39,17 +50,42 @@ public class Program {
     }
 
     public boolean isConnectedTo(String targetId){
-        if(targetId.equals(this.id) || isDirectlyConnected(targetId)){
+        return isConnectedToBis(targetId, new ArrayList<>());
+    }
+
+    private boolean isConnectedToBis(String targetId, List<String> checkedList){
+        checkedList.add(id);
+        System.out.println("Sommet " + id);
+        if(id.equals(targetId)){
             return true;
         }
+        for (Program connectedProgram : connectedPrograms) {
+            if(!checkedList.contains(connectedProgram.id)){
+                return connectedProgram.isConnectedToBis(targetId, checkedList);
+            }
+        }
+        return false;
+    }
+
+    private boolean isConnectedTo(String targetId, List<String> checkedList){
+        if(isDirectlyConnected(targetId)){
+            return true;
+        }
+        checkedList.add(id);
+
+        System.out.println("isConnectedTo -> " + id);
+        System.out.println("\t" + connectedPrograms);
 
         for (Program connectedProgram : connectedPrograms) {
-            if(checked){
-                return false;
+            if((checkedList.contains(connectedProgram.id))
+                    || (connectedProgram.connectedPrograms.size() == 1
+                    && connectedProgram.connectedPrograms.get(0).id.equals(this.id))){
+                continue;
             }
-            checked = true;
-            return connectedProgram.isConnectedTo(targetId);
+
+            return connectedProgram.isConnectedTo(targetId, checkedList);
         }
+
         return false;
     }
 
