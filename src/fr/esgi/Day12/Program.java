@@ -1,7 +1,9 @@
 package fr.esgi.Day12;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Program {
 
@@ -22,18 +24,7 @@ public class Program {
         connectedPrograms.add(program);
     }
 
-    private boolean isCompletlyChecked(List<String> checkedList){
-        int res = 0;
-        for (Program connectedProgram : connectedPrograms) {
-            if(connectedProgram.id.equals(id)){
-                res++;
-            }
-        }
-
-        return (res == connectedPrograms.size());
-    }
-
-    public boolean isDirectlyConnected(String id){
+    public boolean isDirectlyConnectedTo(String id){
         if(this.id.equals(id)){
             return true;
         }
@@ -50,25 +41,29 @@ public class Program {
     }
 
     public boolean isConnectedTo(String targetId){
-        return isConnectedToBis(targetId, new ArrayList<>());
+        return isConnectedToBis(targetId, new HashSet<>(), new HashSet<>());
     }
 
-    private boolean isConnectedToBis(String targetId, List<String> checkedList){
-        checkedList.add(id);
-        System.out.println("Sommet " + id);
+    private boolean isConnectedToBis(String targetId, Set<Program> toCheckList, Set<Program> checkedList){
         if(id.equals(targetId)){
             return true;
         }
-        for (Program connectedProgram : connectedPrograms) {
-            if(!checkedList.contains(connectedProgram.id)){
-                return connectedProgram.isConnectedToBis(targetId, checkedList);
+
+        checkedList.add(this);
+        toCheckList.addAll(connectedPrograms);
+        toCheckList.removeAll(checkedList);
+
+        if(!toCheckList.isEmpty()){
+            for (Program program : toCheckList) {
+                return program.isConnectedToBis(targetId, toCheckList, checkedList);
             }
         }
+
         return false;
     }
 
     private boolean isConnectedTo(String targetId, List<String> checkedList){
-        if(isDirectlyConnected(targetId)){
+        if(isDirectlyConnectedTo(targetId)){
             return true;
         }
         checkedList.add(id);

@@ -1,7 +1,9 @@
 package fr.esgi.Day12;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -2015,7 +2017,7 @@ public class Day12 {
                 "3 <-> 2, 4\n" +
                 "4 <-> 2, 3, 6\n" +
                 "5 <-> 6\n" +
-                "6 <-> 5, 4";
+                "6 <-> 4, 5";
 
         List<Program> programs = new ArrayList<>();
 
@@ -2067,19 +2069,31 @@ public class Day12 {
 //        for (Program program : notConnectedToZero) {
 //            System.out.println("\t" + program);
 //        }
+//        System.out.println("--------------------------------------------------------------------");
+        System.out.println("-- NUMBER OF GROUPS --");
+        Map<Integer, List<Program>> groupsMap = new HashMap<>();
 
-        test(programs, "0", new ArrayList<>());
-    }
+        List<Program> copy = new ArrayList<>(programs);
 
-    static void test(List<Program> programs, String targetId, List<String> checked){
-        for (Program program : programs) {
-            checked.add(program.id);
-            System.out.println("Id : " + program.id);
-            for (Program connectedProgram : program.connectedPrograms) {
-                if(!checked.contains(connectedProgram.id)){
-                    test(connectedProgram.connectedPrograms, targetId, checked);
+        for (int i = 0; i < programs.size(); i++) {
+            if(copy.size() == 0){
+                break;
+            }
+            groupsMap.put(i, new ArrayList<>());
+
+            for (Program program : copy) {
+                if(program.isConnectedTo(String.valueOf(i))){
+                    groupsMap.get(i).add(program);
                 }
             }
+            System.out.println("Group " + i + ", size : " + groupsMap.get(i).size());
+            if(groupsMap.get(i).size() == 0){
+                groupsMap.remove(i);
+            }
+            copy.removeAll(groupsMap.get(i));
         }
+
+        // 1728 -> Too high
+        System.out.println("Number of groups : " + groupsMap.size());
     }
 }
