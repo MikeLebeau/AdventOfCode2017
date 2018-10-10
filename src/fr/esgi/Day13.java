@@ -1,6 +1,7 @@
 package fr.esgi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,35 +12,35 @@ public class Day13 {
 
         String input = getTestInput();
 
+        List<Character[]> firewall = setFirewall(input);
 
-        int inputLength = input.split("\n").length;
-        Pattern pattern = Pattern.compile("([0-9]+):\\s+([0-9]+)");
-        Matcher matcher = pattern.matcher(input.split("\n")[inputLength-1]);
-
-
-        int nbLayers = (matcher.find()) ? Integer.parseInt(matcher.group(1)) : 0 ;
-        List<Integer[]> firewall = new ArrayList<>(nbLayers);
-        Collections.fill(firewall, new Integer[0]);
-
-        firewall.add(new Integer[0]);
-        firewall.add(new Integer[0]);
-        firewall.add(new Integer[0]);
-        firewall.add(new Integer[0]);
-
-
-        System.out.println("NbLayers : " + nbLayers);
         System.out.println("Firewall size : " + firewall.size());
 
-        for (int i = inputLength-1; i >= 0; i--) {
-            matcher = pattern.matcher(input.split("\n")[i]);
-            if(matcher.find()){
-                firewall.add(new Integer[Integer.parseInt(matcher.group(2))]);
-                System.out.println("I : " + i + " => " + matcher.group(2));
-            }
-        }
+		for (int i = 0; i < firewall.size(); i++) {
+			System.out.println(i + " : " + Arrays.toString(firewall.get(i)));
+		}
 
 
     }
+
+    static List<Character[]> setFirewall(String input){
+		int inputLength = input.split("\n").length;
+
+		Pattern pattern = Pattern.compile("([0-9]+):\\s+([0-9]+)");
+		Matcher matcher = pattern.matcher(input.split("\n")[inputLength-1]);
+
+		int nbLayers = (matcher.find()) ? Integer.parseInt(matcher.group(1)) : 0 ;
+		List<Character[]> firewall = new ArrayList<>(Collections.nCopies(nbLayers+1, new Character[0]));
+
+		for (int i = 0; i < inputLength; i++) {
+			matcher = pattern.matcher(input.split("\n")[i]);
+			if(matcher.find()){
+				firewall.set(Integer.parseInt(matcher.group(1)), new Character[Integer.parseInt(matcher.group(2))]);
+			}
+		}
+
+		return firewall;
+	}
 
     static String getTestInput(){
         return "0: 3\n" +
