@@ -1,8 +1,55 @@
 package fr.esgi;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Day13 {
     public static void main(String[] args) {
-        String inputeForTest = "0: 3\n" +
+
+        String input = getTestInput();
+
+
+        int inputLength = input.split("\n").length;
+        Pattern pattern = Pattern.compile("([0-9]+):\\s+([0-9]+)");
+        Matcher matcher = pattern.matcher(input.split("\n")[inputLength-1]);
+
+
+        int nbLayers = (matcher.find()) ? Integer.parseInt(matcher.group(1)) : 0 ;
+        List<Integer[]> firewall = new ArrayList<>(nbLayers);
+        Collections.fill(firewall, new Integer[0]);
+
+        firewall.add(new Integer[0]);
+        firewall.add(new Integer[0]);
+        firewall.add(new Integer[0]);
+        firewall.add(new Integer[0]);
+
+
+        System.out.println("NbLayers : " + nbLayers);
+        System.out.println("Firewall size : " + firewall.size());
+
+        for (int i = inputLength-1; i >= 0; i--) {
+            matcher = pattern.matcher(input.split("\n")[i]);
+            if(matcher.find()){
+                firewall.add(new Integer[Integer.parseInt(matcher.group(2))]);
+                System.out.println("I : " + i + " => " + matcher.group(2));
+            }
+        }
+
+
+    }
+
+    static String getTestInput(){
+        return "0: 3\n" +
+                "1: 2\n" +
+                "4: 4\n" +
+                "6: 4";
+    }
+
+    static String getRealInput(){
+        return "0: 3\n" +
                 "1: 2\n" +
                 "2: 4\n" +
                 "4: 6\n" +
@@ -45,20 +92,5 @@ public class Day13 {
                 "86: 17\n" +
                 "88: 18\n" +
                 "96: 26";
-
-        String inputTest = "0: 3\n" +
-                "1: 2\n" +
-                "4: 4\n" +
-                "6: 4";
-
-
-        String input = inputTest;
-
-//        int[][] firewall = new int[];
-//
-//        for (String s : input.split("\n")) {
-//
-//        }
-
     }
 }

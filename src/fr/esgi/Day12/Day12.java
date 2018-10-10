@@ -2089,11 +2089,19 @@ public class Day12 {
             System.out.println("Group " + i + ", size : " + groupsMap.get(i).size());
             if(groupsMap.get(i).size() == 0){
                 groupsMap.remove(i);
+            }else {
+                copy.removeAll(groupsMap.get(i));
             }
-            copy.removeAll(groupsMap.get(i));
         }
 
-        // 1728 -> Too high
+        int cpt = 0;
+        for (List<Program> value : groupsMap.values()) {
+            for (Program program : value) {
+                cpt++;
+            }
+        }
+
+        System.out.println("Cpt : " + cpt);
         System.out.println("Number of groups : " + groupsMap.size());
     }
 }
