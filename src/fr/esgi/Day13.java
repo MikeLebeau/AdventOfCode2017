@@ -20,6 +20,25 @@ public class Day13 {
 			System.out.println(i + " : " + Arrays.toString(firewall.get(i)));
 		}
 
+		// Order -> I move then Scanner move
+        for (int i = 1; i < firewall.size(); i++) {
+
+            int depthForMod = (firewall.get(i).length != 0) ? (firewall.get(i).length-1)*2 : 0;
+
+            System.out.println("Picosecond " + i );
+            if(firewall.get(i).length != 0 && depthForMod != 0){
+                System.out.println(
+                        "\tScanner pos : " + (i+1)%depthForMod + "\n" +
+                        "\tDepth : " + firewall.get(i).length
+                );
+            }else{
+                System.out.println(
+                        "\tScanner pos : NONE\n" +
+                        "\tDepth : " + firewall.get(i).length
+                );
+            }
+
+        }
 
     }
 
