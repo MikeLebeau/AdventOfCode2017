@@ -1,7 +1,8 @@
 package fr.esgi;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -10,36 +11,37 @@ import java.util.regex.Pattern;
 public class Day13 {
     public static void main(String[] args) {
 
-        String input = getTestInput();
+        List<Character[]> firewall = setFirewall(getRealInput());
 
-        List<Character[]> firewall = setFirewall(input);
+        System.out.println("Star 1 : Severity : " + getSeverity(firewall, 0).getKey());
 
-        System.out.println("Firewall size : " + firewall.size());
+        System.out.println("-------------------------------------------------------------------");
 
-		for (int i = 0; i < firewall.size(); i++) {
-			System.out.println(i + " : " + Arrays.toString(firewall.get(i)));
-		}
-
-		// Order -> I move then Scanner move
-        for (int i = 1; i < firewall.size(); i++) {
-
-            int depthForMod = (firewall.get(i).length != 0) ? (firewall.get(i).length-1)*2 : 0;
-
-            System.out.println("Picosecond " + i );
-            if(firewall.get(i).length != 0 && depthForMod != 0){
-                System.out.println(
-                        "\tScanner pos : " + (i+1)%depthForMod + "\n" +
-                        "\tDepth : " + firewall.get(i).length
-                );
-            }else{
-                System.out.println(
-                        "\tScanner pos : NONE\n" +
-                        "\tDepth : " + firewall.get(i).length
-                );
+        for (int i = 0; i < 1000000000; i++) {
+            Pair<Integer, Boolean> star2 = getSeverity(firewall, i);
+            System.out.println("Delay : " + i + " star2 : " + star2.getKey());
+            if(!star2.getValue()){
+                break;
             }
+        }
+    }
 
+    static Pair<Integer, Boolean> getSeverity(List<Character[]> firewall, int delay){
+        int result = 0;
+        boolean spotted = false;
+
+        for (int picosecond = 0; picosecond < firewall.size(); picosecond++) {
+            int depth = firewall.get(picosecond).length;
+            int depthForMod = (depth-1)*2;
+
+            if(depth != 0 && firewall.get(picosecond) != null && (picosecond+delay)%depthForMod == 0){
+                result += picosecond*depth;
+                System.out.println("SPOTTED !! Picosecond : " + picosecond + ", Depth : " + depth);
+                spotted = true;
+            }
         }
 
+        return new Pair<>(result, spotted);
     }
 
     static List<Character[]> setFirewall(String input){
