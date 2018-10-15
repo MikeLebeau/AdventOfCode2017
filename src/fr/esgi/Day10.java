@@ -21,16 +21,33 @@ public class Day10 {
         System.out.println(sequenceNum[0] + " x " + sequenceNum[1] + " = " + (sequenceNum[0]*sequenceNum[1]));
 
         // ----------------------------- PART TWO -----------------------------
-        sequenceNum = createFulfilledIntArray(sizeArray);
+        String knotHash = doKnotHash(input);
+
+        System.out.println("KnotHash : " + knotHash);
+
+        if("decdf7d377879877173b7f2fb131cf1b".equals(knotHash)){
+            System.out.println("Rien de cassé !");
+        }
+    }
+
+    static String doKnotHash(String input){
+        int[] sequenceNum = createFulfilledIntArray(256);
         String line = convertToAsciiCode(input);
+
         line = addSuffix(line);
-
-        System.out.println("Line : " + line);
-
         doProcess(line.split(","), sequenceNum, 64);
 
-        System.out.println("Sparse Hash : " + Arrays.toString(sequenceNum));
+        List<Integer> denseHashResult = doDenseSparse(sequenceNum);
 
+        String knotHash = "";
+        for (Integer integer : denseHashResult) {
+            knotHash += Integer.toHexString(integer);
+        }
+
+        return knotHash;
+    }
+
+    static List<Integer> doDenseSparse(int[] sequenceNum){
         List<Integer> denseHashResult = new ArrayList<>(16);
         int denseHashTmp = 0;
         for (int i = 1; i <= sequenceNum.length; i++) {
@@ -42,14 +59,7 @@ public class Day10 {
             }
         }
 
-        System.out.println("Dense Hash : " + denseHashResult);
-
-        String knotHash = "";
-        for (Integer integer : denseHashResult) {
-            knotHash += Integer.toHexString(integer);
-        }
-
-        System.out.println("Knot Hash : " + knotHash);
+        return denseHashResult;
     }
 
     static void doProcess(String[] inputSequence, int[] sequenceNum, int nbRound){
