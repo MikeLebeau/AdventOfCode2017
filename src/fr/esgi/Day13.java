@@ -17,10 +17,12 @@ public class Day13 {
 
         System.out.println("-------------------------------------------------------------------");
 
+
         for (int i = 0; i < 1000000000; i++) {
             Pair<Integer, Boolean> star2 = getSeverity(firewall, i);
-            System.out.println("Delay : " + i + " star2 : " + star2.getKey());
+//            System.out.println("Delay : " + i + " star2 : " + star2.getKey());
             if(!star2.getValue()){
+				System.out.println("Star 2 : " + i);
                 break;
             }
         }
@@ -36,8 +38,9 @@ public class Day13 {
 
             if(depth != 0 && firewall.get(picosecond) != null && (picosecond+delay)%depthForMod == 0){
                 result += picosecond*depth;
-                System.out.println("SPOTTED !! Picosecond : " + picosecond + ", Depth : " + depth);
+//                System.out.println("SPOTTED !! Picosecond : " + picosecond + ", Depth : " + depth);
                 spotted = true;
+				return new Pair<>(result, spotted);
             }
         }
 
