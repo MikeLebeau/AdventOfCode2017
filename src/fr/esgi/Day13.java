@@ -17,6 +17,7 @@ public class Day13 {
 
         System.out.println("-------------------------------------------------------------------");
 
+        long start = System.currentTimeMillis();
 
         for (int i = 0; i < 1000000000; i++) {
             Pair<Integer, Boolean> star2 = getSeverity(firewall, i);
@@ -26,6 +27,9 @@ public class Day13 {
                 break;
             }
         }
+
+        long end = System.currentTimeMillis();
+        System.out.println("Time elapsed : " + (end-start) + "ms");
     }
 
     static Pair<Integer, Boolean> getSeverity(List<Character[]> firewall, int delay){
